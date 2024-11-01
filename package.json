@@ -1,6 +1,6 @@
 {
   "name": "commit-pr-generator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "commit-pr-generator is a tool that simplifies the creation of commit messages and pull requests following the Conventional Commits format. It automatically generates relevant content using the output of git diff, including emojis, and allows users to directly open their favorite editor or AI tool to efficiently complete their messages.",
   "main": "commit-pr-generator.mjs",
   "type": "module",
@@ -8,7 +8,8 @@
     "commit-pr-generator": "commit-pr-generator.mjs"
   },
   "scripts": {
-    "start": "node commit-pr-generator.mjs "
+    "start": "node commit-pr-generator.mjs",
+    "publish:package": "npm publish"
   },
   "repository": {
     "type": "git",
