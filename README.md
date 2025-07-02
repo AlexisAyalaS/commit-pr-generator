@@ -14,6 +14,34 @@
 - **Clipboard Integration**: Copies the generated content directly to your clipboard.
 - **Platform Selection**: Option to open preferred AI platforms (e.g., ChatGPT, Gemini) to finalize the generated text.
 
+## 📝 Description: 
+This tool helps developers generate professional commit messages 
+and pull request markdown templates using AI platforms.
+
+## ✨ Features:
+- Automatically captures git diff of your changes
+- Excludes common files (configurable via .prignore)
+- Copies formatted prompt to clipboard
+- Opens your preferred AI platform automatically
+
+## 🌈 Available AI Platforms:
+ - ChatGPT
+ - DeepSeek
+ - Gemini
+
+## 🚀 Usage:
+```bash
+  commit-pr-generator [PATH_TO_REPO] [AI_PLATFORM]
+```
+  
+  ### Options:
+  * PATH_TO_REPO   Path to git repository (default: current directory)
+  * AI_PLATFORM    Platform to open (${Object.keys(AI_PLATFORMS).join(', ')}) - default: chatgpt
+
+## 💡 Examples:
+  - commit-pr-generator . deepseek    # Use current dir with DeepSeek
+  - commit-pr-generator ~/my-project  # Use specific path with ChatGPT
+
 ## Installation
 
 Ensure you have Node.js installed, then install npm package:
@@ -34,7 +62,7 @@ npm install -g commit-pr-generator
 Run the script with the following command:
 
 ```bash
-commit-pr-generator <repo-path>
+commit-pr-generator <repo-path> <AI>
 ```
 
 - `repo-path` _(optional)_: The path to the Git repository. If omitted, the current directory will be used.
@@ -47,7 +75,7 @@ commit-pr-generator <repo-path>
 ## Example
 
 ```bash
-commit-pr-generator /path/to/your/repo
+commit-pr-generator /path/to/your/repo deepseek
 ```
 
 The script will:
@@ -59,7 +87,7 @@ The script will:
 
 - Node.js (v14+)
 - Git
-- Packages: `inquirer`, `open`, `clipboardy`, `robotjs`
+- Packages: `open`, `clipboardy`
 
 ## License
 
