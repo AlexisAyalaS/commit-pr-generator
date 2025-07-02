@@ -1,70 +1,146 @@
-# commit-pr-generator
+# Commit & PR Generator Tool 🤖📝
 
-**commit-pr-generator** is a CLI tool designed to simplify the creation of commit messages and pull request descriptions. It automates the process by formatting the content based on `git diff` outputs and Conventional Commits, and optionally copies the text to your clipboard or opens an AI platform to help finalize your text.
+![Banner](https://github.com/user-attachments/assets/a5ec57bc-1f5d-422a-b1aa-1aeba1233b4f) *(optional: add a banner image)*
 
-## Screenshots
-<img width="1618" alt="Captura de pantalla 2024-10-31 a la(s) 23 28 16" src="https://github.com/user-attachments/assets/a5ec57bc-1f5d-422a-b1aa-1aeba1233b4f">
-<img width="1580" alt="Captura de pantalla 2024-10-31 a la(s) 23 31 31" src="https://github.com/user-attachments/assets/6c52e052-9eca-4126-8da4-1e849f9e2c78">
+**commit-pr-generator** is a powerful CLI tool that automates the creation of professional commit messages and pull request descriptions. It intelligently formats content based on your `git diff` output following Conventional Commits standards, and seamlessly integrates with AI platforms to help you craft perfect documentation.
 
+## 🌟 Key Features
 
-## Features
+- **Smart Change Analysis** - Automatically captures and formats your `git diff` output
+- **AI-Powered Assistance** - Generates commit messages and PR descriptions with AI support
+- **Customizable Exclusions** - Ignores unnecessary files (configurable via `.prignore`)
+- **Multi-Platform Support** - Works with ChatGPT, DeepSeek, and Gemini
+- **Seamless Workflow** - Copies prompts to clipboard and opens your preferred AI platform
+- **Conventional Commits** - Follows industry-standard commit message formatting
 
-- **Automated Commit and PR Drafts**: Generates commit messages and pull request descriptions based on Conventional Commits.
-- **Excludes Unwanted Files**: Filters out common files and directories (e.g., `node_modules`, `.env`) in `git diff`.
-- **Clipboard Integration**: Copies the generated content directly to your clipboard.
-- **Platform Selection**: Option to open preferred AI platforms (e.g., ChatGPT, Gemini) to finalize the generated text.
+## 📸 Screenshots
 
-## Installation
+| Terminal Output | AI Platform Integration |
+|-----------------|-------------------------|
+| <img width="800" alt="Terminal Output" src="https://github.com/user-attachments/assets/a5ec57bc-1f5d-422a-b1aa-1aeba1233b4f"> | <img width="800" alt="AI Integration" src="https://github.com/user-attachments/assets/6c52e052-9eca-4126-8da4-1e849f9e2c78"> |
 
-Ensure you have Node.js installed, then install npm package:
+## 🚀 Installation
 
-```bash
-npm install commit-pr-generator
-```
+### Prerequisites
+- Node.js v16+
+- Git
+- npm or yarn
 
-or install as a global package
-
+### Install as global tool (recommended)
 ```bash
 npm install -g commit-pr-generator
+# or
+yarn global add commit-pr-generator
 ```
 
-
-## Usage
-
-Run the script with the following command:
-
+### Install as project dependency
 ```bash
-commit-pr-generator <repo-path>
+npm install commit-pr-generator --save-dev
+# or
+yarn add commit-pr-generator --dev
 ```
 
-- `repo-path` _(optional)_: The path to the Git repository. If omitted, the current directory will be used.
+## 💻 Usage
 
-Leave in blank path if you are in a git repository
+### Basic Usage
 ```bash
-commit-pr-generator <repo-path>
+commit-pr-generator [PATH_TO_REPO] [AI_PLATFORM]
 ```
 
-## Example
+### Options
+| Parameter      | Description                                                                 | Default           |
+|----------------|-----------------------------------------------------------------------------|-------------------|
+| `PATH_TO_REPO` | Path to git repository (use `.` for current directory)                      | Current directory |
+| `AI_PLATFORM`  | AI platform to use (`chatgpt`, `deepseek`, or `gemini`)                     | `chatgpt`         |
 
+### Examples
 ```bash
-commit-pr-generator /path/to/your/repo
+# Current directory with DeepSeek
+commit-pr-generator . deepseek
+
+# Specific path with ChatGPT
+commit-pr-generator ~/projects/my-awesome-project
+
+# With default settings (current dir + ChatGPT)
+commit-pr-generator
 ```
 
-The script will:
-1. Generate draft commit messages and PR descriptions.
-2. Copy the output to your clipboard.
-3. Prompt you to open an AI platform or exit.
+## ⚙️ Configuration
 
-## Requirements
+### Custom File Exclusions
+Create a `.prignore` file in your project root to specify patterns to exclude from `git diff`:
 
-- Node.js (v14+)
-- Git
-- Packages: `inquirer`, `open`, `clipboardy`, `robotjs`
+```gitignore
+# .prignore example
+*.log
+*.tmp
+dist/
+coverage/
+.DS_Store
+```
 
-## License
+If no `.prignore` is found, the tool uses these default exclusions:
+- `package-lock.json`
+- `node_modules/`
+- `.env`
+- `coverage/`
+- `dist/`
+- `yarn.lock`
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+## 🤖 Supported AI Platforms
 
-## Contributing
+| Platform       | URL                          | Default Prompt |
+|----------------|------------------------------|----------------|
+| ChatGPT        | https://chat.openai.com      | ✅             |
+| DeepSeek Chat  | https://chat.deepseek.com    | ✅             |
+| Google Gemini  | https://gemini.google.com    | ✅             |
 
-Contributions are welcome! Feel free to submit a pull request or open an issue for suggestions and improvements.
+## 🔧 How It Works
+
+1. **Analyzes Changes**: Captures your `git diff` output while respecting exclusions
+2. **Formats Prompt**: Creates an optimized prompt for AI platforms
+3. **Copies to Clipboard**: Automatically copies the prompt for easy pasting
+4. **Opens AI Platform**: Launches your preferred AI tool in browser (optional)
+5. **Generate Content**: Use the AI's output for your commits/PRs
+
+## 📜 Example Output
+
+```markdown
+# [FEATURE] Add user authentication system 🔐
+
+## Changes Made
+- Implemented JWT-based authentication
+- Added user model and migration
+- Created auth middleware
+- Set up protected routes
+
+## Technical Details
+- Uses bcrypt for password hashing
+- Implements 60-minute JWT expiry
+- Includes refresh token mechanism
+
+## Demo
+![Auth Flow](https://example.com/auth-demo.gif)
+```
+
+## 📝 License
+
+MIT © [Alexis Ayala](https://github.com/yourusername)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please open an issue or submit a PR for any improvements.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+💡 **Pro Tip**: Add an alias to your shell config for even faster access:
+```bash
+echo "alias prg='commit-pr-generator'" >> ~/.zshrc  # or ~/.bashrc
+source ~/.zshrc
+```

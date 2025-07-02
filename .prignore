@@ -1,0 +1,9 @@
+# .prignore (archivos/carpetas a excluir en el diff)
+package-lock.json
+node_modules/
+.env
+.env.*
+coverage/
+dist/
+yarn.lock
+.php

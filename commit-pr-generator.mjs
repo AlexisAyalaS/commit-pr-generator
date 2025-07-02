@@ -3,27 +3,32 @@
 import {execSync} from 'child_process';
 import open from 'open';
 import clipboardy from 'clipboardy';
-import robot from 'robotjs';
-import {readFileSync} from 'fs'; // Import fs to read package.json
+import {existsSync, readFileSync} from 'fs';
 
-// Utility function for error handling
-const handleError = (message) => {
-    console.error(`Error: ${message}`);
-    process.exit(1);
+// Configuración de las plataformas de IA disponibles
+const AI_PLATFORMS = {
+    chatgpt: {
+        url: 'https://chatgpt.com/',
+        name: 'ChatGPT'
+    },
+    deepseek: {
+        url: 'https://chat.deepseek.com',
+        name: 'DeepSeek Chat'
+    },
+    gemini: {
+        url: 'https://gemini.google.com/',
+        name: 'Google Gemini'
+    }
 };
 
-// Get the package version
-let packageVersion;
-try {
-    const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
-    packageVersion = packageJson.version;
-} catch (error) {
-    handleError('Could not read package.json or extract version.');
-}
-
-// Display the package version in a styled message
+// Mostrar información del paquete con mejor formato
 console.log(`
-----------------------------------------------------
+╔══════════════════════════════════════════════════╗
+║          COMMIT & PR GENERATOR TOOL              ║
+╠══════════════════════════════════════════════════╣
+║ Author: Alexis Ayala <lex.solorio15@gmail.com>   ║
+║ Version: 0.0.6                                   ║
+╚══════════════════════════════════════════════════╝
 
  ██████╗ ██████╗ ███╗   ███╗███╗   ███╗██╗████████╗   ██████╗ ██████╗        ██████╗ ███████╗███╗   ██╗███████╗██████╗  █████╗ ████████╗ ██████╗ ██████╗ 
 ██╔════╝██╔═══██╗████╗ ████║████╗ ████║██║╚══██╔══╝   ██╔══██╗██╔══██╗      ██╔════╝ ██╔════╝████╗  ██║██╔════╝██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
@@ -32,65 +37,129 @@ console.log(`
 ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║ ╚═╝ ██║██║   ██║      ██║     ██║  ██║      ╚██████╔╝███████╗██║ ╚████║███████╗██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚═╝   ╚═╝      ╚═╝     ╚═╝  ╚═╝       ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
 
-Version ${packageVersion}
-Author: Alexis Ayala <lex.solorio15@gmail.com>
-Description: Use this tool to generate commit messages and pull request markdown effortlessly.
-----------------------------------------------------
 `);
 
 const PROMPT = `
-Please draft markdown for a commit message for the following changes using Conventional Commits format, 
-ensuring to include relevant emojis at the start:
+Please draft markdown for a pull request with the following requirements:
 
-Please draft markdown for a pull request for the following changes, 
-ensure to include relevant emojis at the start, a title describing the changes. Leave a section for embedding images, 
-and do not include 'Related Issues' or 'Checklist': 
+1. Title: Clear, concise description of changes with relevant emoji
+2. Body:
+   - Detailed description of changes
+   - Technical implementation notes if relevant
+   - Demo section for images/videos (if applicable)
+3. Format: Use Conventional Commits standard
+4. Exclude: 'Related Issues' or 'Checklist' sections
+
+Git Diff of changes:
 `;
 
-// Get the repository path from the command line or use the current directory
+// Obtener argumentos
 const repoPath = process.argv[2] || process.cwd();
+const aiPlatform = process.argv[3]?.toLowerCase() || 'chatgpt';
 
-// Change to the repository directory
+// Validar plataforma de IA con mensaje más amigable
+if (!AI_PLATFORMS[aiPlatform]) {
+    console.error(`❌ Error: Unsupported AI platform '${aiPlatform}'`);
+    console.log(`Please choose one of these available platforms:\n${Object.keys(AI_PLATFORMS).map(p => `- ${p}`).join('\n')}`);
+    process.exit(1);
+}
+
+// Cambiar al directorio del repositorio con mejor feedback
+console.log(`\n🔍 Analyzing repository at: ${repoPath}`);
 try {
     process.chdir(repoPath);
+    console.log(`✓ Successfully accessed repository directory`);
 } catch (error) {
-    handleError(`Could not change directory: ${error.message}`);
+    console.error(`❌ Error changing directory: ${error.message}`);
+    console.log(`Please verify the path exists and you have proper permissions.`);
+    process.exit(1);
 }
 
-// Check if it's a Git repository
+// Verificar si es un repositorio Git con mejor mensaje
 try {
     execSync('git rev-parse --is-inside-work-tree', {stdio: 'ignore'});
+    console.log(`✓ Valid Git repository detected`);
 } catch {
-    handleError('Not a Git repository. Make sure you are in a valid Git directory.');
+    console.error(`❌ Error: Current directory is not a Git repository`);
+    console.log(`Please run this command in a directory with a .git folder`);
+    process.exit(1);
 }
 
-// Command to execute git diff, excluding specific files and directories
-const diffCommand = `git diff -- . ':(exclude)package-lock.json' ':(exclude)node_modules' ':(exclude).env' ':(exclude).env.local' ':(exclude).env.production' ':(exclude)coverage' ':(exclude)dist' ':(exclude)yarn.lock' ':(exclude)middleware'`;
+// Leer .prignore (o .gitignore si no existe) con mejor feedback
+const ignoreFile = '.prignore';
+let excludedPatterns = [
+    'package-lock.json',
+    'node_modules',
+    '.env',
+    'coverage',
+    'dist',
+    'yarn.lock'
+]; // Valores por defecto
 
-// Capture the output of git diff
+if (existsSync(ignoreFile)) {
+    console.log(`✓ Found .prignore file - using custom exclusion patterns`);
+    const ignoreContent = readFileSync(ignoreFile, 'utf-8');
+    excludedPatterns = ignoreContent
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line && !line.startsWith('#'));
+} else {
+    console.log(`ℹ️ No .prignore file found - using default exclusions`);
+}
+
+console.log(`🗑️ Excluding files matching patterns:\n${excludedPatterns.map(p => `  - ${p}`).join('\n')}`);
+
+// Construir comando git diff
+const isWindows = process.platform === 'win32';
+const excludePrefix = isWindows ? ':!' : ':(exclude)';
+const diffExcludes = excludedPatterns
+    .map(pattern => `${excludePrefix}${pattern}`)
+    .join(' ');
+
+const diffCommand = `git diff -- . ${diffExcludes}`;
+
+// Capturar el diff de Git con mejor manejo de errores
+console.log(`\n📊 Capturing git diff of your changes...`);
 let DIFF;
 try {
     DIFF = execSync(diffCommand, {encoding: 'utf-8'});
+    if (!DIFF.trim()) {
+        console.log('ℹ️ No changes detected in tracked files (empty diff)');
+        console.log('Make sure you have staged or made changes to files not in your exclude list');
+    }
 } catch (error) {
-    handleError(`Error executing git diff: ${error.message}`);
+    console.error(`❌ Error executing git diff: ${error.message}`);
+    DIFF = '';
 }
 
-// Compose the final content to be copied
-const FINAL_CONTENT = `${PROMPT}\n\n### Git Diff:\n\n${DIFF}`;
+// Preparar el contenido final
+const FINAL_CONTENT = `${PROMPT}\n\n${DIFF || '<No changes detected>'}`;
 
-// Copy the content to the clipboard
-clipboardy.writeSync(FINAL_CONTENT);
-console.log('\nThe prompt has been copied to the clipboard.');
+// Copiar al portapapeles con confirmación clara
+try {
+    clipboardy.writeSync(FINAL_CONTENT);
+    console.log(`\n📋 Success! The following has been copied to your clipboard:`);
+    console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+    console.log(`... [${DIFF.length} characters of git diff output] ...`);
+    console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+} catch (error) {
+    console.error(`❌ Failed to copy to clipboard: ${error.message}`);
+    console.log(`You can manually copy this prompt:`);
+    console.log(FINAL_CONTENT);
+}
 
-// Open ChatGPT URL by default
-const openUrl = 'https://chatgpt.com/';
-
-// Open the chosen URL in the browser or exit if clipboard option is selected
-await open(openUrl);
-
-// Wait briefly to ensure the browser has opened
-setTimeout(() => {
-    // Simulate pasting clipboard content and pressing "enter"
-    robot.keyTap('v', 'command'); // For Mac, use 'command'; for Windows/Linux, use 'control'
-    robot.keyTap('enter');
-}, 2000); // Adjust timing if necessary
+// Abrir la plataforma seleccionada con mejor feedback
+const platform = AI_PLATFORMS[aiPlatform];
+console.log(`\n🚀 Opening ${platform.name} in your default browser...`);
+try {
+    await open(platform.url);
+    console.log(`✔ Successfully opened ${platform.name}`);
+    console.log(`\n🎉 You're all set! Here's what to do next:
+1. The AI prompt is already in your clipboard
+2. Paste it (Ctrl+V/Cmd+V) in ${platform.name}
+3. Review and refine the generated content
+4. Use it for your commit or PR`);
+} catch (error) {
+    console.error(`❌ Failed to open ${platform.name}: ${error.message}`);
+    console.log(`Please visit manually: ${platform.url}`);
+}
