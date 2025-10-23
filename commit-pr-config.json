@@ -1,0 +1,31 @@
+{
+  "prompts": {
+    "default": "Please draft markdown for a pull request with the following requirements:\n\n1. Title: Clear, concise description of changes with relevant emoji\n2. Body:\n   - Detailed description of changes\n   - Technical implementation notes if relevant\n   - Demo section for images/videos (if applicable)\n3. Format: Use Conventional Commits standard\n4. Exclude: 'Related Issues' or 'Checklist' sections\n\nGit Diff of changes:",
+    "commit": "Please generate a commit message following Conventional Commits standard:\n\n1. Format: type(scope): description\n2. Types: feat, fix, docs, style, refactor, test, chore\n3. Include relevant emoji\n4. Keep description under 50 characters\n\nGit Diff of changes:",
+    "detailed": "Please create a comprehensive pull request description with:\n\n1. Title with emoji and clear description\n2. Overview of changes\n3. Technical details and implementation notes\n4. Breaking changes (if any)\n5. Testing instructions\n6. Screenshots/demos (if applicable)\n7. Follow Conventional Commits format\n\nGit Diff of changes:",
+    "branch-name": "Please suggest appropriate branch names for these changes following Git naming conventions:\n\nRequirements:\n1. Use lowercase letters and hyphens (kebab-case)\n2. Be descriptive but concise (max 50 characters)\n3. Include type prefix: feat/, fix/, docs/, style/, refactor/, test/, chore/\n4. Suggest 3-5 different options\n5. Consider the main functionality being added/changed\n\nFormat your response as:\n- option1\n- option2\n- option3\n- option4\n- option5\n\nGit Diff of changes:"
+  },
+  "defaultExclusions": [
+    "package-lock.json",
+    "node_modules",
+    ".env",
+    ".env.*",
+    "coverage",
+    "dist",
+    "yarn.lock",
+    ".php",
+    "*.log",
+    "*.tmp",
+    ".DS_Store"
+  ],
+  "logging": {
+    "level": "info",
+    "enableColors": true
+  },
+  "git": {
+    "checkStagedChanges": true,
+    "checkUnstagedChanges": true,
+    "maxDiffSize": 50000
+  },
+  "language": "en"
+}

@@ -1,24 +1,54 @@
 {
   "name": "commit-pr-generator",
-  "version": "0.0.6",
-  "description": "commit-pr-generator is a tool that simplifies the creation of commit messages and pull requests following the Conventional Commits format. It automatically generates relevant content using the output of git diff, including emojis, and allows users to directly open their favorite editor or AI tool to efficiently complete their messages.",
-  "main": "commit-pr-generator.mjs",
+  "version": "1.0.0",
+  "description": "CLI tool that automates commit messages and pull request descriptions using AI. Follows Conventional Commits format and supports multiple AI platforms.",
+  "main": "main.mjs",
   "type": "module",
   "bin": {
-    "commit-pr-generator": "commit-pr-generator.mjs"
+    "git-ai": "commit-pr-generator.mjs"
   },
   "scripts": {
-    "start": "node commit-pr-generator.mjs . deepseek",
-    "publish:package": "npm publish"
+    "start": "node main.mjs",
+    "setup": "node setup.mjs"
   },
+  "keywords": [
+    "git",
+    "commit",
+    "pull-request",
+    "conventional-commits",
+    "ai",
+    "cli",
+    "automation",
+    "git-hooks",
+    "development-tools"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/AlexisAyalaS/commit-pr-generator.git"
   },
-  "author": "Alexis Ayala Solorio<lex.solorio15@gmail.com>",
-  "license": "ISC",
+  "author": "Alexis Ayala Solorio <lex.solorio15@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "dependencies": {
+    "chalk": "^5.3.0",
     "clipboardy": "^4.0.0",
-    "open": "^10.1.0"
-  }
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.12",
+    "open": "^10.1.0",
+    "ora": "^8.0.1"
+  },
+  "files": [
+    "main.mjs",
+    "commit-pr-generator.mjs",
+    "setup.mjs",
+    "config.mjs",
+    "git-utils.mjs",
+    "ai-client.mjs",
+    "markdown-generator.mjs",
+    "logger.mjs",
+    "commit-pr-config.example.json",
+    "README.md"
+  ]
 }

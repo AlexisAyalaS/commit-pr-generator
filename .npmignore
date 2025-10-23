@@ -1,0 +1,41 @@
+# Archivos de desarrollo
+node_modules/
+package-lock.json
+yarn.lock
+
+# Archivos generados
+generated-files/
+*.md
+!README.md
+
+# Archivos de configuración local
+commit-pr-config.json
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Archivos temporales
+.DS_Store
+*.tmp
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Coverage
+coverage/
+
+# Archivos de prueba
+__tests__/
+*.test.js
+*.test.mjs
+jest.config.json
+
+# Archivos de instalación local
+INSTALL.md

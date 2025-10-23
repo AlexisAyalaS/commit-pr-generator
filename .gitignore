@@ -39,3 +39,13 @@ temp/
 
 # Others
 *.bak
+
+# Testing
+coverage/
+.nyc_output/
+
+# Generated files
+generated-files/
+
+# Configuration (optional - uncomment if you want to ignore local config)
+# commit-pr-config.json
